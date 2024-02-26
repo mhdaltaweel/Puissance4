@@ -1,2 +1,2 @@
 # Puissance4
-IA
+IA alta
