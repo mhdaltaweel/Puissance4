@@ -1,6 +1,12 @@
 package game;
 
+import MCTS.NoeudMCTS;
+
+import java.util.List;
 import java.util.Scanner;
+
+import static game.Etat.JETON_JAUNE;
+import static game.Etat.JETON_ROUGE;
 
 public class Puissance4 {
 
@@ -12,9 +18,49 @@ public class Puissance4 {
     }
 
     private Coup choisirMeilleurCoupMCTS() {
+        // Vérifie d'abord si une victoire immédiate est possible
+        List<Coup> coupsPossibles = etatActuel.coupsPossibles();
+        for (Coup coup : coupsPossibles) {
+            if (etatActuel.estVictoireImmediat(coup, etatActuel.getJoueurActuel() == 0 ? JETON_ROUGE : JETON_JAUNE)) {
+                return coup; // Retourne ce coup pour gagner le jeu
+            }
+        }
 
-        return new Coup(0); //retourne un coup par défaut
+        // Vérifie ensuite si une victoire immédiate est possible pour l'adversaire et tente de bloquer
+        char jetonAdversaire = etatActuel.getJoueurActuel() == 0 ? JETON_JAUNE : JETON_ROUGE;
+        for (Coup coup : coupsPossibles) {
+            if (etatActuel.estVictoireImmediat(coup, jetonAdversaire)) {
+                return coup; // Retourne ce coup pour bloquer l'adversaire
+            }
+        }
+
+        // Initialisation de la racine de l'arbre MCTS avec l'état actuel
+        NoeudMCTS racine = new NoeudMCTS(etatActuel, null, null);
+
+        int nombreDeSimulations = 1000; // Par exemple, faire 1000 simulations
+
+        for (int i = 0; i < nombreDeSimulations; i++) {
+            NoeudMCTS noeudSelectionne = racine.selection(); // Sélection
+            noeudSelectionne.expansion(); // Expansion
+            double resultatSimulation = noeudSelectionne.simulation(); // Simulation
+            noeudSelectionne.propagationEnArriere(resultatSimulation); // Rétropropagation
+        }
+
+        // Choisir le meilleur coup parmi les enfants de la racine
+        NoeudMCTS meilleurNoeud = null;
+        double meilleurScore = Double.MIN_VALUE;
+
+        for (NoeudMCTS enfant : racine.getEnfants()) {
+            double score = (double) enfant.getNbVictoires() / enfant.getNbVisites();
+            if (score > meilleurScore) {
+                meilleurScore = score;
+                meilleurNoeud = enfant;
+            }
+        }
+
+        return meilleurNoeud != null ? meilleurNoeud.getCoup() : null;
     }
+
 
 
     public void jouer(){
@@ -43,11 +89,11 @@ public class Puissance4 {
                // etatActuel.jouerCoup(new Coup(colonneChoisie));
             }
 
-            String resultat = etatActuel.verifierFin();
-            if (!resultat.equals("Continue")) {
+            int resultat = etatActuel.verifierFin();
+            if (resultat != 0) {
                 jeuTerminer = true;
                 etatActuel.printEtat(); // Affiche le plateau final
-                if (resultat.equals("Match nul")) {
+                if (resultat == 0) {
                     System.out.println("La partie se termine par un match nul !");
                 } else {
                     System.out.println(resultat); // Affiche le gagnant
