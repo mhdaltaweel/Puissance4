@@ -1,3 +1,5 @@
+package game;
+
 public class Coup {
 
     int colonne ;
@@ -5,4 +7,7 @@ public class Coup {
     public Coup(int colonne){
         this.colonne = colonne;
     }
+
+
+
 }

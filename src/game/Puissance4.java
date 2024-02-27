@@ -1,3 +1,5 @@
+package game;
+
 import java.util.Scanner;
 
 public class Puissance4 {
@@ -7,6 +9,11 @@ public class Puissance4 {
 
     public Puissance4(){
         this.etatActuel = new Etat();
+    }
+
+    private Coup choisirMeilleurCoupMCTS() {
+
+        return new Coup(0); //retourne un coup par défaut
     }
 
 
@@ -28,9 +35,12 @@ public class Puissance4 {
                 }
             }else{
                 // ici L'ia
-                colonneChoisie = (int) (Math.random() * 7); // Choix aléatoire
-                System.out.println("Ordinateur joue dans la colonne : " + colonneChoisie);
-                etatActuel.jouerCoup(new Coup(colonneChoisie));
+                Coup meilleurCoup = choisirMeilleurCoupMCTS();
+                System.out.println("Ordinateur joue dans la colonne : " + meilleurCoup.colonne);
+                etatActuel.jouerCoup(meilleurCoup);
+               // colonneChoisie = (int) (Math.random() * 7); // Choix aléatoire
+               // System.out.println("Ordinateur joue dans la colonne : " + colonneChoisie);
+               // etatActuel.jouerCoup(new Coup(colonneChoisie));
             }
 
             String resultat = etatActuel.verifierFin();

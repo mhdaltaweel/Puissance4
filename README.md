@@ -1,2 +1,2 @@
-# Puissance4
+# game.Puissance4
 IA alta

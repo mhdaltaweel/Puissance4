@@ -1,3 +1,10 @@
+package game;
+
+import game.Coup;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Etat {
 
     public static final char JETON_VIDE = '_';
@@ -5,6 +12,7 @@ public class Etat {
     public static final char JETON_JAUNE = 'J';
     char[][] plateau = new char[6][7];
     int joueurActuel;
+    Etat etat;
 
 
 
@@ -12,12 +20,22 @@ public class Etat {
         for (int i = 0; i < plateau.length; i++) {
             for (int j = 0; j < plateau[i].length; j++) {
                 plateau[i][j] = JETON_VIDE;
-
             }
         }
         joueurActuel = 0 ;
-        
     }
+
+    // Constructeur de copie
+    public Etat(Etat autre) {
+        this.joueurActuel = autre.joueurActuel;
+        this.plateau = new char[6][7];
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 7; j++) {
+                this.plateau[i][j] = autre.plateau[i][j];
+            }
+        }
+    }
+
 
     public boolean jouerCoup(Coup coup) {
         // Trouver la première ligne libre dans la colonne choisie et placer le jeton
@@ -83,6 +101,19 @@ public class Etat {
             }
         }
         return "Match nul"; // Si aucune condition de victoire n'est remplie et le plateau est plein
+    }
+
+
+    // Generates a list of possible moves
+    public List<Coup> coupsPossibles() {
+        List<Coup> coups = new ArrayList<>();
+        for (int col = 0; col < plateau[0].length; col++) {
+            // Check if the top row of this column is empty
+            if (plateau[0][col] == JETON_VIDE) {
+                coups.add(new Coup(col));
+            }
+        }
+        return coups;
     }
 
     public int getJoueurActuel() {
