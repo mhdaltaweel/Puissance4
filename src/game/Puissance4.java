@@ -17,7 +17,7 @@ public class Puissance4 {
         this.etatActuel = new Etat();
     }
 
-    private Coup choisirMeilleurCoupMCTS() {
+    private Coup choisirMeilleurCoupMCTS(long limiteDeTempsEnMillisecondes) {
         // Vérifie d'abord si une victoire immédiate est possible
         List<Coup> coupsPossibles = etatActuel.coupsPossibles();
         for (Coup coup : coupsPossibles) {
@@ -37,7 +37,11 @@ public class Puissance4 {
         // Initialisation de la racine de l'arbre MCTS avec l'état actuel
         NoeudMCTS racine = new NoeudMCTS(etatActuel, null, null);
 
-        int nombreDeSimulations = 1000; // Par exemple, faire 1000 simulations
+        long debut = System.currentTimeMillis();
+        long fin = debut + limiteDeTempsEnMillisecondes;
+
+
+        int nombreDeSimulations = 1000; // faire 1000 simulations
 
         for (int i = 0; i < nombreDeSimulations; i++) {
             NoeudMCTS noeudSelectionne = racine.selection(); // Sélection
@@ -46,6 +50,7 @@ public class Puissance4 {
             noeudSelectionne.propagationEnArriere(resultatSimulation); // Rétropropagation
         }
 
+        System.out.println("Nombre de simulations réalisées: " + nombreDeSimulations);
         // Choisir le meilleur coup parmi les enfants de la racine
         NoeudMCTS meilleurNoeud = null;
         double meilleurScore = Double.MIN_VALUE;
@@ -56,6 +61,11 @@ public class Puissance4 {
                 meilleurScore = score;
                 meilleurNoeud = enfant;
             }
+        }
+        if (meilleurNoeud != null) {
+            System.out.println("Probabilité estimée de victoire pour l'ordinateur: " + meilleurScore * 100 + "%");
+        } else {
+            System.out.println("Aucun coup favorable détecté.");
         }
 
         return meilleurNoeud != null ? meilleurNoeud.getCoup() : null;
@@ -81,7 +91,7 @@ public class Puissance4 {
                 }
             }else{
                 // ici L'ia
-                Coup meilleurCoup = choisirMeilleurCoupMCTS();
+                Coup meilleurCoup = choisirMeilleurCoupMCTS(200);
                 System.out.println("Ordinateur joue dans la colonne : " + meilleurCoup.colonne);
                 etatActuel.jouerCoup(meilleurCoup);
                // colonneChoisie = (int) (Math.random() * 7); // Choix aléatoire

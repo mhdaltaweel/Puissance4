@@ -29,7 +29,7 @@ public class NoeudMCTS {
 
     // parcours de l'arbre depuis la racine pour choisir les noeuds
     public NoeudMCTS selection() {
-        System.out.println("Début selection");
+       // System.out.println("Début selection");
         NoeudMCTS noeud = this;
         Random rand = new Random();
 
@@ -56,7 +56,7 @@ public class NoeudMCTS {
 
             noeud = meilleurNoeud; // Cela ne devrait jamais être null ici car tous les enfants ont été visités
         }
-        System.out.println("Fin selection, retourne: " + noeud);
+        //System.out.println("Fin selection, retourne: " + noeud);
 
         return noeud; // Retourne le noeud sélectionné pour expansion
     }
@@ -74,7 +74,7 @@ public class NoeudMCTS {
 
     // ajoute un nouvel enfant au noeud sélectionné pour un coup non encore exploré
     public void expansion() {
-        System.out.println("Début expansion");
+        //System.out.println("Début expansion");
         List<Coup> coupsPossibles = this.etat.coupsPossibles();
         for (Coup coup : coupsPossibles) {
             Etat nouvelEtat = new Etat(this.etat); // Using copy constructor
@@ -83,7 +83,7 @@ public class NoeudMCTS {
                 this.enfants.add(nouvelEnfant);
             }
         }
-        System.out.println("Fin expansion, nombre d'enfants ajoutés: " + this.enfants.size());
+        //System.out.println("Fin expansion, nombre d'enfants ajoutés: " + this.enfants.size());
     }
 
 
@@ -91,7 +91,7 @@ public class NoeudMCTS {
 
     // joue des coups aléatoires depuis l'état du noeud
     public double simulation() {
-        System.out.println("Début simulation");
+        //System.out.println("Début simulation");
         Etat etatTemp = new Etat(this.etat); // Utilise le constructeur de copie
         Random rand = new Random();
 
@@ -104,10 +104,10 @@ public class NoeudMCTS {
 
             int resultat = etatTemp.verifierFin();
             if (resultat != 0) { // Si le jeu est fini (victoire, défaite ou match nul)
-                System.out.println("simultation ......................... " + resultat);
+                //System.out.println("simultation ......................... " + resultat);
                 return resultat; // Retournez le résultat de la simulation
             }
-            System.out.println("Fin simulation, résultat: " + resultat);
+            //System.out.println("Fin simulation, résultat: " + resultat);
         }
 
         return 0; // Retourne 0 si le jeu n'est pas fini après la simulation
@@ -116,14 +116,14 @@ public class NoeudMCTS {
 
 
     public void propagationEnArriere(double resultat) {
-        System.out.println("Début propagation en arrière, resultat: " + resultat);
+        //System.out.println("Début propagation en arrière, resultat: " + resultat);
         NoeudMCTS noeud = this;
         while (noeud != null) {
             noeud.incrementerVisites(); // Incrémente le nombre de visites pour ce noeud
             if (resultat == 1.0) {
                 noeud.incrementerVictoires(); // Incrémente le nombre de victoires si le résultat est une victoire
             }
-            System.out.println("Noeud mis à jour: " + noeud.toString());
+           // System.out.println("Noeud mis à jour: " + noeud.toString());
             noeud = noeud.getParent(); // Remonte vers le parent jusqu'à atteindre la racine
         }
     }
